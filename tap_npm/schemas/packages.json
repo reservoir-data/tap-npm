@@ -117,28 +117,60 @@
       "items": {
         "type": "object",
         "properties": {
-          "_from": {
-            "type": "string"
-          },
           "_id": {
             "type": "string"
           },
-          "_nodeVersion": {
+          "version_name": {
             "type": "string"
           },
-          "_npmOperationalInternal": {
+          "version": {
+            "type": "string"
+          },
+          "homepage": {
+            "type": ["string", "null"]
+          },
+          "repository": {
+            "type": ["string", "null"]
+          },
+          "scripts": {
+            "properties": {},
+            "required": [],
+            "type": "object"
+          },
+          "version_author": {
             "properties": {
-              "host": {
-                "type": "string"
-              },
-              "tmp": {
+              "name": {
                 "type": "string"
               }
             },
             "required": [
-              "host",
-              "tmp"
+              "name"
             ],
+            "type": ["object", "null"]
+          },
+          "version_license": {
+            "type": ["object", "null"],
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": ["string", "null"]
+              }
+            }
+          },
+          "description": {
+            "type": "string"
+          },
+          "dist": {
+            "properties": {
+              "shasum": {
+                "type": "string"
+              },
+              "tarball": {
+                "type": "string"
+              }
+            },
             "type": "object"
           },
           "_npmUser": {
@@ -159,63 +191,6 @@
           "_npmVersion": {
             "type": "string"
           },
-          "_resolved": {
-            "type": "string"
-          },
-          "_shasum": {
-            "type": "string"
-          },
-          "version_author": {
-            "properties": {
-              "name": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "name"
-            ],
-            "type": ["object", "null"]
-          },
-          "description": {
-            "type": "string"
-          },
-          "directories": {
-            "properties": {},
-            "required": [],
-            "type": "object"
-          },
-          "dist": {
-            "properties": {
-              "shasum": {
-                "type": "string"
-              },
-              "tarball": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "shasum",
-              "tarball"
-            ],
-            "type": "object"
-          },
-          "jsnext:main": {
-            "type": "string"
-          },
-          "version_license": {
-            "type": ["object", "null"],
-            "properties": {
-              "type": {
-                "type": "string"
-              },
-              "url": {
-                "type": ["string", "null"]
-              }
-            }
-          },
-          "main": {
-            "type": "string"
-          },
           "version_maintainers": {
             "items": {
               "properties": {
@@ -233,35 +208,6 @@
               "type": "object"
             },
             "type": "array"
-          },
-          "version_name": {
-            "type": "string"
-          },
-          "peerDependencies": {
-            "properties": {
-              "rxjs": {
-                "type": "string"
-              },
-              "zone.js": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "rxjs",
-              "zone.js"
-            ],
-            "type": "object"
-          },
-          "scripts": {
-            "properties": {},
-            "required": [],
-            "type": "object"
-          },
-          "typings": {
-            "type": "string"
-          },
-          "version": {
-            "type": "string"
           }
         }
       }

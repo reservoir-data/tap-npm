@@ -33,23 +33,29 @@ class NPMPackageStream(RESTStream):
         times: Dict[str, str] = row.pop("time", {})
         row["modified"] = times.pop("modified")
         row["created"] = times.pop("created")
+        # row["timestamps"] = [{"version": k, "timestamp": v} for k, v in times.items()]
 
         versions: Dict[str, Dict[str, Any]] = row.pop("versions", {})
         versions_list = []
         for ver in versions.values():
-            license_type = ver.pop("license", None)
-            ver["version_license"] = self._clean_license(license_type)
+            new_ver = {}
+            new_ver["_id"] = ver["_id"]
+            new_ver["version"] = ver["version"]
+            new_ver["homepage"] = ver.get("homepage")
+            new_ver["repository"] = ver.get("repository")
+            new_ver["scripts"] = ver.get("scripts")
+            new_ver["description"] = ver["description"]
+            new_ver["dist"] = ver.get("dist")
+            new_ver["_npmVersion"] = ver.get("_npmVersion")
+            new_ver["_npmUser"] = ver.get("_npmUser")
+            new_ver["version_name"] = ver["name"]
+            new_ver["version_author"] = ver.get("author") or None
+            new_ver["version_maintainers"] = ver.get("maintainers")
 
-            version_author = ver.pop("author", None)
-            ver["version_author"] = version_author or None
+            license_type = ver.pop("license")
+            new_ver["version_license"] = self._clean_license(license_type)
 
-            version_maintainers = ver.pop("maintainers", None)
-            ver["version_maintainers"] = version_maintainers
-
-            version_name = ver.pop("name", None)
-            ver["version_name"] = version_name
-
-            versions_list.append(ver)
+            versions_list.append(new_ver)
         row["versions"] = versions_list
 
         dist_tags = row.pop("dist-tags", {})
