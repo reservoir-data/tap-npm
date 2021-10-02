@@ -217,7 +217,7 @@
           "jsnext:main": {
             "type": "string"
           },
-          "license": {
+          "version_license": {
             "type": ["object", "null"],
             "properties": {
               "type": {
