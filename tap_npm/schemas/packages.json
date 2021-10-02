@@ -141,6 +141,13 @@
                 "type": "string"
               }
             },
+            "required": [
+              "directory",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
           "scripts": {
             "properties": {},
             "required": [],
