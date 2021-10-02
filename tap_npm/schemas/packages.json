@@ -130,8 +130,17 @@
             "type": ["string", "null"]
           },
           "repository": {
-            "type": ["string", "null"]
-          },
+            "properties": {
+              "directory": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
           "scripts": {
             "properties": {},
             "required": [],
