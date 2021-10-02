@@ -2,13 +2,11 @@
 
 from typing import List
 
-from singer_sdk import Tap, Stream
+from singer_sdk import Stream, Tap
 from singer_sdk import typing as th
-from tap_npm.client import NPMPackageStream
 
-from tap_npm.streams import (
-    NPMPackageStream,
-)
+from tap_npm.client import NPMPackageStream
+from tap_npm.streams import NPMPackageStream
 
 STREAM_TYPES = [
     NPMPackageStream,
@@ -17,6 +15,7 @@ STREAM_TYPES = [
 
 class TapNPM(Tap):
     """NPM tap class."""
+
     name = "tap-npm"
 
     config_jsonschema = th.PropertiesList(
@@ -24,7 +23,7 @@ class TapNPM(Tap):
             "packages",
             th.ArrayType(th.StringType),
             required=True,
-            description="Packages to query from NPM registry"
+            description="Packages to query from NPM registry",
         ),
     ).to_dict()
 

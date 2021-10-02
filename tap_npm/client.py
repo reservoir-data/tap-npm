@@ -6,7 +6,6 @@ from urllib.parse import quote_plus
 
 from singer_sdk.streams import RESTStream
 
-
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
 
@@ -21,10 +20,7 @@ class NPMPackageStream(RESTStream):
 
     @property
     def partitions(self) -> List[dict]:
-        return [
-            {"package": quote_plus(package)}
-            for package in self.config["packages"]
-        ]
+        return [{"package": quote_plus(package)} for package in self.config["packages"]]
 
     @staticmethod
     def _clean_license(value: Optional[Union[str, dict]]) -> Dict[str, Optional[str]]:
@@ -36,10 +32,7 @@ class NPMPackageStream(RESTStream):
         times: Dict[str, str] = row.pop("time", {})
         row["modified"] = times.pop("modified")
         row["created"] = times.pop("created")
-        row["timestamps"] = [
-            {"version": k, "timestamp": v}
-            for k, v in times.items()
-        ]
+        row["timestamps"] = [{"version": k, "timestamp": v} for k, v in times.items()]
 
         versions: Dict[str, Dict[str, Any]] = row.pop("versions", {})
         versions_list = []
