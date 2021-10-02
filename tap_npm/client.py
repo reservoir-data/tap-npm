@@ -35,28 +35,7 @@ class NPMPackageStream(RESTStream):
         row["created"] = times.pop("created")
         # row["timestamps"] = [{"version": k, "timestamp": v} for k, v in times.items()]
 
-        versions: Dict[str, Dict[str, Any]] = row.pop("versions", {})
-        versions_list = []
-        for ver in versions.values():
-            new_ver = {}
-            new_ver["_id"] = ver["_id"]
-            new_ver["version"] = ver["version"]
-            new_ver["homepage"] = ver.get("homepage")
-            new_ver["repository"] = ver.get("repository")
-            new_ver["scripts"] = ver.get("scripts")
-            new_ver["description"] = ver.get("description")
-            new_ver["dist"] = ver.get("dist")
-            new_ver["_npmVersion"] = ver.get("_npmVersion")
-            new_ver["_npmUser"] = ver.get("_npmUser")
-            new_ver["version_name"] = ver["name"]
-            new_ver["version_author"] = ver.get("author") or None
-            new_ver["version_maintainers"] = ver.get("maintainers")
-
-            license_type = ver.pop("license", None)
-            new_ver["version_license"] = self._clean_license(license_type)
-
-            versions_list.append(new_ver)
-        row["versions"] = versions_list
+        row.pop("versions", {})
 
         dist_tags = row.pop("dist-tags", {})
         row["latest"] = latest = dist_tags.pop("latest", None)
