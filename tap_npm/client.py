@@ -40,7 +40,8 @@ class NPMPackageStream(RESTStream):
         for ver in versions.values():
             license_type = ver.get("license")
             ver["license"] = self._clean_license(license_type)
-            ver["author"] = ver.get("author") or None
+            version_author = ver.pop("author", None)
+            ver["version_author"] = version_author or None
             versions_list.append(ver)
         row["versions"] = versions_list
 
