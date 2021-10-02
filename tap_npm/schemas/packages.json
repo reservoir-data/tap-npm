@@ -98,21 +98,6 @@
       ],
       "type": "object"
     },
-    "timestamps": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "version": {
-            "type": "string"
-          },
-          "timestamp": {
-            "format": "date-time",
-            "type": "string"
-          }
-        }
-      }
-    },
     "modified": {
       "format": "date-time",
       "type": "string"

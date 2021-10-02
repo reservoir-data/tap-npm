@@ -33,7 +33,6 @@ class NPMPackageStream(RESTStream):
         times: Dict[str, str] = row.pop("time", {})
         row["modified"] = times.pop("modified")
         row["created"] = times.pop("created")
-        row["timestamps"] = [{"version": k, "timestamp": v} for k, v in times.items()]
 
         versions: Dict[str, Dict[str, Any]] = row.pop("versions", {})
         versions_list = []
