@@ -231,7 +231,7 @@
           "main": {
             "type": "string"
           },
-          "maintainers": {
+          "version_maintainers": {
             "items": {
               "properties": {
                 "email": {
@@ -249,7 +249,7 @@
             },
             "type": "array"
           },
-          "name": {
+          "version_name": {
             "type": "string"
           },
           "peerDependencies": {
