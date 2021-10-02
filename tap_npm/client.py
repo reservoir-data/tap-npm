@@ -14,6 +14,7 @@ class NPMPackageStream(RESTStream):
 
     url_base = "https://registry.npmjs.org"
     name = "packages"
+    primary_keys = ["_id"]
     schema_filepath = SCHEMAS_DIR / "packages.json"
     records_jsonpath = "$"
     path = "/{package}"
