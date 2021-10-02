@@ -44,7 +44,7 @@ class NPMPackageStream(RESTStream):
             new_ver["homepage"] = ver.get("homepage")
             new_ver["repository"] = ver.get("repository")
             new_ver["scripts"] = ver.get("scripts")
-            new_ver["description"] = ver["description"]
+            new_ver["description"] = ver.get("description")
             new_ver["dist"] = ver.get("dist")
             new_ver["_npmVersion"] = ver.get("_npmVersion")
             new_ver["_npmUser"] = ver.get("_npmUser")
@@ -52,7 +52,7 @@ class NPMPackageStream(RESTStream):
             new_ver["version_author"] = ver.get("author") or None
             new_ver["version_maintainers"] = ver.get("maintainers")
 
-            license_type = ver.pop("license")
+            license_type = ver.pop("license", None)
             new_ver["version_license"] = self._clean_license(license_type)
 
             versions_list.append(new_ver)

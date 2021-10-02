@@ -141,17 +141,12 @@
                 "type": "string"
               }
             },
-            "required": [
-              "directory",
-              "type",
-              "url"
-            ],
-            "type": "object"
+            "type": ["object", "null"]
           },
           "scripts": {
             "properties": {},
             "required": [],
-            "type": "object"
+            "type": ["object", "null"]
           },
           "version_author": {
             "properties": {
@@ -176,7 +171,7 @@
             }
           },
           "description": {
-            "type": "string"
+            "type": ["string", "null"]
           },
           "dist": {
             "properties": {
@@ -205,7 +200,7 @@
             "type": "object"
           },
           "_npmVersion": {
-            "type": "string"
+            "type": ["string", "null"]
           },
           "version_maintainers": {
             "items": {
