@@ -106,6 +106,20 @@
       "format": "date-time",
       "type": "string"
     },
+    "timestamps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "users": {
       "type": "array",
       "items": {
