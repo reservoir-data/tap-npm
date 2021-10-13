@@ -5,10 +5,11 @@ from typing import List
 from singer_sdk import Stream, Tap
 from singer_sdk import typing as th
 
-from tap_npm.client import NPMPackageStream
+from tap_npm.client import NPMDownloadsStream, NPMPackageStream
 
 STREAM_TYPES = [
     NPMPackageStream,
+    NPMDownloadsStream
 ]
 
 
@@ -23,6 +24,12 @@ class TapNPM(Tap):
             th.ArrayType(th.StringType),
             required=True,
             description="Packages to query from NPM registry",
+        ),
+        th.Property(
+            "start_date",
+            th.DateTimeType,
+            default="2015-01-10",
+            description="Initial date to get downlaods from",
         ),
     ).to_dict()
 
