@@ -6,8 +6,8 @@ authors = ["Edgar Ramírez-Mondragón"]
 license = "Apache 2.0"
 
 [tool.poetry.dependencies]
-python = "<3.11,>=3.6.2"
-singer-sdk = "==0.4.2"
+python = "<3.11,>=3.7.1"
+singer-sdk = "==0.4.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.0.1"
@@ -23,7 +23,7 @@ multi_line_output = 3 # Vertical Hanging Indent
 src_paths = "tap_npm"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core>=1.0.8"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
