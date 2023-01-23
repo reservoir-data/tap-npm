@@ -12,7 +12,7 @@ singer-sdk = "==0.18.0"
 [tool.poetry.dev-dependencies]
 pytest = "^7.2.1"
 black = {version = "^22.12", allow-prereleases = true}
-isort = "^5.11.1"
+isort = "^5.11.4"
 
 [tool.black]
 line-length = 88
