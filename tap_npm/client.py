@@ -1,21 +1,35 @@
 """REST client handling, including NPMStream base class."""
 
+from __future__ import annotations
+
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import TYPE_CHECKING
 from urllib.parse import quote_plus
 
+import requests
 from dateutil.relativedelta import relativedelta
 from dateutil.tz import UTC
-
-import requests
-
 from singer_sdk import typing as th
 from singer_sdk.streams import RESTStream, Stream
 
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
-def range_pairs(start: int, end: int, step: int):
+
+def range_pairs(start: int, end: int, step: int) -> Generator[tuple, None, None]:
+    """Yield pairs of numbers from start to end, with step size.
+
+    Args:
+        start: The starting number.
+        end: The ending number, inclusive.
+        step: The step size.
+
+    Yields:
+        A tuple of two numbers.
+    """
     current_value = start
     for i, n in enumerate(range(start, end, step)):
         if i == 0:
@@ -36,17 +50,35 @@ class NPMPackageStream(RESTStream):
     path = "/{package}"
 
     @property
-    def partitions(self) -> List[dict]:
+    def partitions(self) -> list[dict]:
+        """Return a list of partitions.
+
+        Returns:
+            A list of partitions.
+        """
         return [{"package": quote_plus(package)} for package in self.config["packages"]]
 
     @staticmethod
-    def _clean_license(value: Optional[Union[str, dict]]) -> Dict[str, Optional[str]]:
+    def _clean_license(value: str | dict | None) -> dict[str, str | None] | None:
         if isinstance(value, str):
-            value = {"type": value, "url": None}
+            return {"type": value, "url": None}
         return value
 
-    def post_process(self, row: dict, context: Optional[dict] = None) -> dict:
-        times: Dict[str, str] = row.pop("time", {})
+    def post_process(
+        self,
+        row: dict,
+        context: dict | None = None,  # noqa: ARG002
+    ) -> dict:
+        """Post-process a row.
+
+        Args:
+            row: The row.
+            context: The stream context.
+
+        Returns:
+            The processed row.
+        """
+        times: dict[str, str] = row.pop("time", {})
         row["modified"] = times.pop("modified")
         row["created"] = times.pop("created")
         row["timestamps"] = [{"version": k, "timestamp": v} for k, v in times.items()]
@@ -54,13 +86,13 @@ class NPMPackageStream(RESTStream):
         row.pop("versions", {})
 
         dist_tags = row.pop("dist-tags", {})
-        row["latest"] = latest = dist_tags.pop("latest", None)
+        row["latest"] = dist_tags.pop("latest", None)
         row["dist_tags"] = list(dist_tags.values())
 
-        users: Dict[str, bool] = row.pop("users", {})
+        users: dict[str, bool] = row.pop("users", {})
         row["users"] = list(users.keys())
 
-        license_type: Optional[Union[str, dict]] = row.get("license")
+        license_type: str | dict | None = row.get("license")
         row["license"] = self._clean_license(license_type)
 
         row["author"] = row.get("author") or None
@@ -71,7 +103,7 @@ class NPMPackageStream(RESTStream):
 class NPMDownloadsStream(Stream):
     """NPM downloads stream class."""
 
-    START_DATE = datetime(2016, 1, 1)
+    START_DATE = datetime(2016, 1, 1, tzinfo=UTC)
     URL_BASE = "https://api.npmjs.org/downloads/range"
 
     name = "downloads"
@@ -85,14 +117,37 @@ class NPMDownloadsStream(Stream):
     ).to_dict()
 
     @property
-    def partitions(self) -> List[dict]:
+    def partitions(self) -> list[dict]:
+        """Return a list of partitions.
+
+        Returns:
+            A list of partitions.
+        """
         return [{"package": package} for package in self.config["packages"]]
 
-    def post_process(self, row: dict, context: Optional[dict] = None) -> dict:
-        row["package"] = context["package"]
+    def post_process(self, row: dict, context: dict | None = None) -> dict:
+        """Post-process a row.
+
+        Args:
+            row: The row.
+            context: The stream context.
+
+        Returns:
+            The row.
+        """
+        if context:
+            row["package"] = context["package"]
         return row
 
-    def get_records(self, context: dict):
+    def get_records(self, context: dict) -> Generator[dict, None, None]:
+        """Get download records.
+
+        Args:
+            context: The stream context.
+
+        Yields:
+            Dictionaries of download records.
+        """
         package = context["package"]
         start_date = (self.get_starting_timestamp(context) or self.START_DATE).date()
         now = datetime.now(tz=UTC).date() - relativedelta(days=1)
@@ -104,7 +159,7 @@ class NPMDownloadsStream(Stream):
             url = f"{self.URL_BASE}/{start}:{end}/{package}"
             self.logger.info("Requesting downloads from %s", url)
 
-            response = requests.get(url)
+            response = requests.get(url, timeout=10)
             response.raise_for_status()
 
             data = response.json()

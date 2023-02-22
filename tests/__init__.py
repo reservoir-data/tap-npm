@@ -1,3 +1,3 @@
-"""Singer tap for NPM."""
+"""Tests for tap-npm."""
 
 from __future__ import annotations
