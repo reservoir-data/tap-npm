@@ -11,6 +11,9 @@
       "properties": {
         "name": {
           "type": "string"
+        },
+        "email": {
+          "type": "string"
         }
       },
       "type": ["object", "null"]
@@ -24,7 +27,7 @@
       "required": [
         "url"
       ],
-      "type": "object"
+      "type": ["object", "null"]
     },
     "description": {
       "type": "string"
@@ -39,7 +42,7 @@
       }
     },
     "homepage": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "license": {
       "type": ["object", "null"],
@@ -96,7 +99,7 @@
         "type",
         "url"
       ],
-      "type": "object"
+      "type": ["object", "null"]
     },
     "modified": {
       "format": "date-time",
@@ -125,6 +128,15 @@
       "items": {
         "type": "string"
       }
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "package": {
+      "type": "string"
     }
   },
   "required": [
