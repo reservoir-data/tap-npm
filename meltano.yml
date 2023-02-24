@@ -1,0 +1,39 @@
+version: 1
+default_environment: dev
+project_id: 6cc28ebc-8761-4ad5-bf77-fbf3105515a1
+environments:
+- name: dev
+- name: staging
+- name: prod
+plugins:
+  extractors:
+  - name: tap-npm
+    namespace: tap_npm
+    pip_url: -e .
+    capabilities:
+    - catalog
+    - discover
+    - state
+    settings:
+    - name: packages
+      kind: array
+    - name: start_date
+      kind: date_iso8601
+    config:
+      packages:
+      - "@evidence-dev/evidence"
+      - "@evidence-dev/sqlite"
+      - "@evidence-dev/bigquery"
+      - "@evidence-dev/snowflake"
+      - "@evidence-dev/postgres"
+      - "@evidence-dev/mysql"
+      - "@evidence-dev/duckdb"
+      - "@evidence-dev/redshift"
+      - "@evidence-dev/csv"
+  loaders:
+  - name: target-duckdb
+    variant: jwills
+    pip_url: target-duckdb~=0.4
+    config:
+      filepath: output/dwh.duckdb
+      default_target_schema: $MELTANO_EXTRACTOR_NAMESPACE
