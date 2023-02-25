@@ -14,9 +14,10 @@ from singer_sdk import typing as th
 class TapApp:
     """Tap application."""
 
-    def __init__(  # noqa: PLR0913
+    def __init__(
         self,
         name: str,
+        *,
         cls: type[Tap] = Tap,
         description: str | None = None,
         streams: list[Stream] | None = None,
@@ -44,7 +45,7 @@ class TapApp:
 
         if isinstance(config_jsonschema, dict):
             self.plugin.config_jsonschema = config_jsonschema
-        elif isinstance(config_jsonschema, th.JSONTypeHelper):
+        elif isinstance(config_jsonschema, th.PropertiesList):
             self.plugin.config_jsonschema = config_jsonschema.to_dict()
         else:
             errmsg = "config_jsonschema must be a dict or JSONTypeHelper"
