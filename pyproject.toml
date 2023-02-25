@@ -23,7 +23,7 @@ pytest = "^7.2.1"
 
 [tool.poetry.scripts]
 # CLI declaration
-tap-npm = 'tap_npm.tap:TapNPM.cli'
+tap-npm = 'tap_npm.tap:app'
 
 [tool.black]
 line-length = 88
