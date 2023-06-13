@@ -36,10 +36,17 @@ warn_unused_configs = true
 addopts = "-vvv"
 
 [tool.ruff]
-ignore = ["ANN101", "DJ", "PD"]
+ignore = [
+  "ANN101",  # missing-type-self
+  "DJ",      # flake8-django
+  "FIX002",  # line-contains-todo
+]
 line-length = 88
 select = ["ALL"]
 src = ["tap_npm"]
+
+[tool.ruff.flake8-annotations]
+allow-star-arg-any = true
 
 [tool.ruff.isort]
 known-first-party = ["tap_npm"]
