@@ -10,10 +10,6 @@ from tap_npm.client import NPMDownloadsStream, NPMPackageStream
 app = TapApp(
     name="tap-npm",
     description="Singer.io tap for extracting data from NPM registry",
-    streams=[
-        NPMPackageStream,
-        NPMDownloadsStream,
-    ],
     config_jsonschema=th.PropertiesList(
         th.Property(
             "packages",
@@ -25,7 +21,10 @@ app = TapApp(
             "start_date",
             th.DateTimeType,
             default="2015-01-10",
-            description="Initial date to get downlaods from",
+            description="Initial date to get downloads from",
         ),
     ),
 )
+
+app.add_stream(NPMPackageStream)
+app.add_stream(NPMDownloadsStream)
