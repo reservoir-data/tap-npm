@@ -1,6 +1,8 @@
 [build-system]
-requires = ["poetry-core>=1.0.8"]
 build-backend = "poetry.core.masonry.api"
+requires = [
+  "poetry-core==1.6.1",
+]
 
 [tool.poetry]
 name = "tap-npm"
@@ -28,13 +30,6 @@ tap-npm = 'tap_npm.tap:app'
 [tool.black]
 line-length = 88
 
-[tool.mypy]
-python_version = "3.10"
-warn_unused_configs = true
-
-[tool.pytest.ini_options]
-addopts = "-vvv"
-
 [tool.ruff]
 ignore = [
   "ANN101",  # missing-type-self
@@ -58,3 +53,10 @@ required-imports = ["from __future__ import annotations"]
 
 [tool.ruff.pydocstyle]
 convention = "google"
+
+[tool.pytest.ini_options]
+addopts = "-vvv"
+
+[tool.mypy]
+python_version = "3.10"
+warn_unused_configs = true
