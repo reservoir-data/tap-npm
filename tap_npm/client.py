@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+import typing as t
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING
 from urllib.parse import quote_plus
 
 import requests
@@ -13,7 +13,7 @@ from dateutil.tz import UTC
 from singer_sdk import typing as th
 from singer_sdk.streams import RESTStream, Stream
 
-if TYPE_CHECKING:
+if t.TYPE_CHECKING:
     from collections.abc import Generator
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
@@ -30,13 +30,13 @@ def range_pairs(start: int, end: int, step: int) -> Generator[tuple, None, None]
     Yields:
         A tuple of two numbers.
     """
-    current_value = start
     for i, n in enumerate(range(start, end, step)):
         if i == 0:
+            current_value = n
             continue
         yield current_value, n - 1
         current_value = n
-    yield current_value, end
+    yield current_value, end - 1
 
 
 class NPMPackageStream(RESTStream):
@@ -44,7 +44,7 @@ class NPMPackageStream(RESTStream):
 
     url_base = "https://registry.npmjs.org"
     name = "packages"
-    primary_keys = ["_id"]
+    primary_keys: t.ClassVar[list[str]] = ["_id"]
     schema_filepath = SCHEMAS_DIR / "packages.json"
     records_jsonpath = "$"
     path = "/{package}"
@@ -60,9 +60,7 @@ class NPMPackageStream(RESTStream):
 
     @staticmethod
     def _clean_license(value: str | dict | None) -> dict[str, str | None] | None:
-        if isinstance(value, str):
-            return {"type": value, "url": None}
-        return value
+        return {"type": value, "url": None} if isinstance(value, str) else value
 
     def post_process(
         self,
@@ -107,7 +105,7 @@ class NPMDownloadsStream(Stream):
     URL_BASE = "https://api.npmjs.org/downloads/range"
 
     name = "downloads"
-    primary_keys = ["package", "day"]
+    primary_keys: t.ClassVar[list[str]] = ["package", "day"]
     replication_key = "day"
 
     schema = th.PropertiesList(
