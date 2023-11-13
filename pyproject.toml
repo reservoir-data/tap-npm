@@ -17,11 +17,11 @@ repository = "https://github.com/edgarrmondragon/tap-npm"
 documentation = "https://github.com/edgarrmondragon/tap-npm#readme"
 
 [tool.poetry.dependencies]
-python = "<4,>=3.8"
+python = ">=3.8,<4"
 singer-sdk = "~=0.33.0"
 
 [tool.poetry.group.dev.dependencies]
-singer-sdk = {version = "~=0.33.0", extras = ["testing"]}
+singer-sdk = {version = "*", extras = ["testing"]}
 
 [tool.poetry.scripts]
 # CLI declaration

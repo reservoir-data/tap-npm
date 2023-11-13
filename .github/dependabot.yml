@@ -10,7 +10,6 @@ updates:
     schedule:
       interval: "weekly"
       timezone: "America/Mexico_City"
-      time: "10:00"
     reviewers:
       - "edgarrmondragon"
     labels:
@@ -18,11 +17,11 @@ updates:
     commit-message:
       prefix: "chore(deps): "
       prefix-development: "chore(deps-dev): "
+    versioning-strategy: increase-if-necessary
   - package-ecosystem: pip
     directory: "/.github/workflows"
     schedule:
       interval: "monthly"
-      time: "10:00"
       timezone: "America/Mexico_City"
     reviewers:
       - "edgarrmondragon"
@@ -33,7 +32,6 @@ updates:
     schedule:
       interval: "monthly"
       timezone: "America/Mexico_City"
-      time: "10:00"
     reviewers:
       - "edgarrmondragon"
     commit-message:
