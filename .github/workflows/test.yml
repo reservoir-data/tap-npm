@@ -6,8 +6,6 @@ on:
     paths:
       - tap_npm/**
       - tests/**
-      - noxfile.py
-      - poetry.lock
       - pyproject.toml
       - .github/workflows/test.yml
       - .github/workflows/constraints.txt
@@ -16,68 +14,62 @@ on:
     paths:
       - tap_npm/**
       - tests/**
-      - noxfile.py
-      - poetry.lock
       - pyproject.toml
       - .github/workflows/test.yml
       - .github/workflows/constraints.txt
+  schedule:
+  - cron: "0 10 * * *"
+  workflow_dispatch:
 
 jobs:
   tests:
     runs-on: ubuntu-latest
     env:
       FORCE_COLOR: "1"
-      NOXPYTHON: ${{ matrix.python-version }}
-      NOXSESSION: tests
       PIP_CONSTRAINT: .github/workflows/constraints.txt
-      SETUPTOOLS_USE_DISTUTILS: stdlib
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        script: ["test:integration"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        include:
+        - { script: "test:dependencies", python-version: "3.12" }
+        - { script: "typing:check",      python-version: "3.12" }
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4.1.1
-
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4.7.1
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
+        cache: pip
 
     - name: Upgrade pip
       run: |
         pip install pip
         pip --version
 
-    - name: Install Poetry
+    - name: Install Hatch
       run: |
-        pipx install poetry
-        poetry --version
+        pipx install hatch --python "python${{ matrix.python-version }}"
+        hatch --version
 
-    - name: Install Nox
+    - name: Run
+      env:
+        TAP_NPM_PACKAGES: ${{ secrets.TAP_NPM_PACKAGES }}
       run: |
-        pipx install nox
-        pipx inject nox nox-poetry
-        nox --version
-
-    - name: Run Nox
-      run: |
-        nox
+        hatch run ${{ matrix.script }}
 
   pre-commit:
     runs-on: ubuntu-latest
     env:
       FORCE_COLOR: "1"
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4.1.1
-
-    - name: Set up Python
-      uses: actions/setup-python@v4.7.1
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
       with:
         python-version: "3.11"
-
     - uses: pre-commit/action@v3.0.0
-
     - uses: pre-commit-ci/lite-action@v1.0.1
       if: always()

@@ -20,8 +20,8 @@ class TapApp:
         *,
         cls: type[Tap] = Tap,
         description: str | None = None,
-        streams: list[Stream] | None = None,
-        config_jsonschema: dict[str, t.Any] | th.PropertiesList = None,
+        streams: list[type[Stream]] | None = None,
+        config_jsonschema: dict[str, t.Any] | th.PropertiesList | None = None,
     ) -> None:
         """Initialize the application.
 
@@ -36,7 +36,7 @@ class TapApp:
             ValueError: If config_jsonschema is not a dict or JSONTypeHelper.
         """
 
-        class CustomTap(cls):
+        class CustomTap(cls):  # type: ignore[misc, valid-type]
             pass
 
         self.plugin: type[CustomTap] = CustomTap
