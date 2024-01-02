@@ -45,26 +45,23 @@ tap-npm --config CONFIG --discover > ./catalog.json
 
 - [ ] `Developer TODO:` As a first step, scan the entire project for the text "`TODO:`" and complete any recommended steps, deleting the "TODO" references once completed.
 
-### Initialize your Development Environment
 
 ```bash
-pipx install poetry
-poetry install
+pipx install hatch
 ```
 
 ### Create and Run Tests
 
-Create tests within the `tap_npm/tests` subfolder and
-  then run:
+Run integration tests:
 
 ```bash
-poetry run pytest
+hatch run tests:integration
 ```
 
-You can also test the `tap-npm` CLI interface directly using `poetry run`:
+You can also test the `tap-npm` CLI interface directly:
 
 ```bash
-poetry run tap-npm --help
+hatch run sync:console -- --about --format=json
 ```
 
 ### Testing with [Meltano](https://www.meltano.com)

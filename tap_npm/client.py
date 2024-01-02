@@ -19,7 +19,9 @@ if t.TYPE_CHECKING:
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
 
-def range_pairs(start: int, end: int, step: int) -> Generator[tuple, None, None]:
+def range_pairs(
+    start: int, end: int, step: int
+) -> Generator[tuple[int, int], None, None]:
     """Yield pairs of numbers from start to end, with step size.
 
     Args:
@@ -30,6 +32,7 @@ def range_pairs(start: int, end: int, step: int) -> Generator[tuple, None, None]
     Yields:
         A tuple of two numbers.
     """
+    current_value = start
     for i, n in enumerate(range(start, end, step)):
         if i == 0:
             current_value = n
@@ -39,7 +42,7 @@ def range_pairs(start: int, end: int, step: int) -> Generator[tuple, None, None]
     yield current_value, end - 1
 
 
-class NPMPackageStream(RESTStream):
+class NPMPackageStream(RESTStream):  # type: ignore[type-arg]
     """NPM Packages stream class."""
 
     url_base = "https://registry.npmjs.org"
@@ -50,7 +53,7 @@ class NPMPackageStream(RESTStream):
     path = "/{package}"
 
     @property
-    def partitions(self) -> list[dict]:
+    def partitions(self) -> list[dict[str, t.Any]]:
         """Return a list of partitions.
 
         Returns:
@@ -59,14 +62,16 @@ class NPMPackageStream(RESTStream):
         return [{"package": quote_plus(package)} for package in self.config["packages"]]
 
     @staticmethod
-    def _clean_license(value: str | dict | None) -> dict[str, str | None] | None:
+    def _clean_license(
+        value: str | dict[str, t.Any] | None,
+    ) -> dict[str, str | None] | None:
         return {"type": value, "url": None} if isinstance(value, str) else value
 
     def post_process(
         self,
-        row: dict,
-        context: dict | None = None,  # noqa: ARG002
-    ) -> dict:
+        row: dict[str, t.Any],
+        context: dict[str, t.Any] | None = None,  # noqa: ARG002
+    ) -> dict[str, t.Any]:
         """Post-process a row.
 
         Args:
@@ -90,7 +95,7 @@ class NPMPackageStream(RESTStream):
         users: dict[str, bool] = row.pop("users", {})
         row["users"] = list(users.keys())
 
-        license_type: str | dict | None = row.get("license")
+        license_type: str | dict[str, t.Any] | None = row.get("license")
         row["license"] = self._clean_license(license_type)
 
         row["author"] = row.get("author") or None
@@ -115,7 +120,7 @@ class NPMDownloadsStream(Stream):
     ).to_dict()
 
     @property
-    def partitions(self) -> list[dict]:
+    def partitions(self) -> list[dict[str, t.Any]]:
         """Return a list of partitions.
 
         Returns:
@@ -123,7 +128,11 @@ class NPMDownloadsStream(Stream):
         """
         return [{"package": package} for package in self.config["packages"]]
 
-    def post_process(self, row: dict, context: dict | None = None) -> dict:
+    def post_process(
+        self,
+        row: dict[str, t.Any],
+        context: dict[str, t.Any] | None = None,
+    ) -> dict[str, t.Any]:
         """Post-process a row.
 
         Args:
@@ -137,7 +146,10 @@ class NPMDownloadsStream(Stream):
             row["package"] = context["package"]
         return row
 
-    def get_records(self, context: dict) -> Generator[dict, None, None]:
+    def get_records(
+        self,
+        context: dict[str, t.Any] | None,
+    ) -> Generator[dict[str, t.Any], None, None]:
         """Get download records.
 
         Args:
@@ -146,6 +158,9 @@ class NPMDownloadsStream(Stream):
         Yields:
             Dictionaries of download records.
         """
+        if not context:
+            return
+
         package = context["package"]
         start_date = (self.get_starting_timestamp(context) or self.START_DATE).date()
         now = datetime.now(tz=UTC).date() - relativedelta(days=1)

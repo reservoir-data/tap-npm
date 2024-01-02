@@ -1,39 +1,34 @@
 ci:
   autofix_prs: false
+  autofix_commit_msg: '[pre-commit.ci] auto fixes'
+  autoupdate_schedule: weekly
+  autoupdate_commit_msg: 'chore(deps): pre-commit autoupdate'
 
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
-    hooks:
-      - id: check-json
-        exclude: "\\.vscode/.*.json"
-      - id: check-toml
-      - id: check-yaml
-      - id: end-of-file-fixer
-      - id: trailing-whitespace
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.5.0
+  hooks:
+  - id: check-json
+    exclude: "\\.vscode/.*.json"
+  - id: check-toml
+  - id: check-yaml
+  - id: end-of-file-fixer
+    exclude: "plugins/.*/.*\\.lock"
+  - id: trailing-whitespace
 
-  - repo: https://github.com/tox-dev/pyproject-fmt
-    rev: "1.3.0"
-    hooks:
-      - id: pyproject-fmt
+- repo: https://github.com/tox-dev/pyproject-fmt
+  rev: "1.5.3"
+  hooks:
+  - id: pyproject-fmt
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.3
-    hooks:
-      - id: ruff
-        args: [--fix, --exit-non-zero-on-fix, --show-fixes]
-      - id: ruff-format
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: "v0.1.10"
+  hooks:
+  - id: ruff
+    args: [--fix, --exit-non-zero-on-fix, --show-fixes]
+  - id: ruff-format
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.6.1
-    hooks:
-      - id: mypy
-        pass_filenames: true
-        additional_dependencies:
-          - types-requests
-          - types-python-dateutil
-
-  - repo: https://github.com/pre-commit/pre-commit
-    rev: v3.5.0
-    hooks:
-      - id: validate_manifest
+- repo: https://github.com/pre-commit/pre-commit
+  rev: v3.6.0
+  hooks:
+  - id: validate_manifest
