@@ -7,8 +7,6 @@ from singer_sdk.testing import get_tap_test_class
 from tap_npm.client import range_pairs
 from tap_npm.tap import app
 
-pytest_plugins = ("singer_sdk.testing.pytest_plugin",)
-
 
 def test_range_pairs() -> None:
     """Test range_pairs() function."""
