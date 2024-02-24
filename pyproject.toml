@@ -73,7 +73,6 @@ check = "mypy --strict {args:tap_npm tests}"
 [tool.ruff]
 line-length = 88
 src = ["tap_npm"]
-target-version = "py38"
 
 [tool.ruff.lint]
 ignore = [
