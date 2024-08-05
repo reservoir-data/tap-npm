@@ -16,6 +16,8 @@ from singer_sdk.streams import RESTStream, Stream
 if t.TYPE_CHECKING:
     from collections.abc import Generator
 
+    from singer_sdk.helpers.types import Context
+
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
 
@@ -53,7 +55,7 @@ class NPMPackageStream(RESTStream):  # type: ignore[type-arg]
     path = "/{package}"
 
     @property
-    def partitions(self) -> list[dict[str, t.Any]]:
+    def partitions(self) -> list[Context]:
         """Return a list of partitions.
 
         Returns:
@@ -70,7 +72,7 @@ class NPMPackageStream(RESTStream):  # type: ignore[type-arg]
     def post_process(
         self,
         row: dict[str, t.Any],
-        context: dict[str, t.Any] | None = None,  # noqa: ARG002
+        context: Context | None = None,  # noqa: ARG002
     ) -> dict[str, t.Any]:
         """Post-process a row.
 
@@ -120,7 +122,7 @@ class NPMDownloadsStream(Stream):
     ).to_dict()
 
     @property
-    def partitions(self) -> list[dict[str, t.Any]]:
+    def partitions(self) -> list[Context]:
         """Return a list of partitions.
 
         Returns:
@@ -131,7 +133,7 @@ class NPMDownloadsStream(Stream):
     def post_process(
         self,
         row: dict[str, t.Any],
-        context: dict[str, t.Any] | None = None,
+        context: Context | None = None,
     ) -> dict[str, t.Any]:
         """Post-process a row.
 
@@ -148,7 +150,7 @@ class NPMDownloadsStream(Stream):
 
     def get_records(
         self,
-        context: dict[str, t.Any] | None,
+        context: Context | None,
     ) -> Generator[dict[str, t.Any], None, None]:
         """Get download records.
 
