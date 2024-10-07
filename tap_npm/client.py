@@ -55,7 +55,7 @@ class NPMPackageStream(RESTStream):  # type: ignore[type-arg]
     path = "/{package}"
 
     @property
-    def partitions(self) -> list[Context]:
+    def partitions(self) -> list[dict[str, t.Any]]:
         """Return a list of partitions.
 
         Returns:
@@ -122,7 +122,7 @@ class NPMDownloadsStream(Stream):
     ).to_dict()
 
     @property
-    def partitions(self) -> list[Context]:
+    def partitions(self) -> list[dict[str, t.Any]]:
         """Return a list of partitions.
 
         Returns:
