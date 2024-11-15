@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+import importlib.resources
 import typing as t
 from datetime import datetime
-from pathlib import Path
 from urllib.parse import quote_plus
 
 import requests
@@ -13,12 +13,14 @@ from dateutil.tz import UTC
 from singer_sdk import typing as th
 from singer_sdk.streams import RESTStream, Stream
 
+from tap_npm import schemas
+
 if t.TYPE_CHECKING:
     from collections.abc import Generator
 
     from singer_sdk.helpers.types import Context
 
-SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
+SCHEMAS_DIR = importlib.resources.files(schemas)
 
 
 def range_pairs(
