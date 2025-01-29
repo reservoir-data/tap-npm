@@ -31,7 +31,7 @@ classifiers = [
 dependencies = [
   "python-dateutil",
   "requests",
-  "singer-sdk~=0.43.1",
+  "singer-sdk~=0.44.0",
 ]
 optional-dependencies.dev = [
   "tap-npm[testing,typing]",
