@@ -9,14 +9,12 @@ Built with the [Meltano Tap SDK](https://sdk.meltano.com) for Singer Taps.
 - [ ] `Developer TODO:` Update the below as needed to correctly describe the install procedure. For instance, if you do not have a PyPi repo, or if you want users to directly install from your git repo, you can modify this step as appropriate.
 
 ```bash
-pipx install tap-npm
+uv tool install git+https://github.com/reservoir-data/tap-npm.git
 ```
 
 ## Configuration
 
 ### Accepted Config Options
-
-- [ ] `Developer TODO:` Provide a list of config options accepted by the tap.
 
 A full list of supported settings and capabilities for this
 tap is available by running:
@@ -24,10 +22,6 @@ tap is available by running:
 ```bash
 tap-npm --about
 ```
-
-### Source Authentication and Authorization
-
-- [ ] `Developer TODO:` If your tap requires special access on the source system, or any special authentication requirements, provide those here.
 
 ## Usage
 
@@ -43,22 +37,18 @@ tap-npm --config CONFIG --discover > ./catalog.json
 
 ## Developer Resources
 
+### Initialize your Development Environment
+
 ```bash
-pipx install hatch
+uv tool install --with tox-uv tox
 ```
 
 ### Create and Run Tests
 
-Run integration tests:
+Run all tests:
 
 ```bash
-hatch run test:integration
-```
-
-You can also test the `tap-npm` CLI interface directly:
-
-```bash
-hatch run sync:console -- --about --format=json
+tox run-parallel
 ```
 
 ### Testing with [Meltano](https://www.meltano.com)

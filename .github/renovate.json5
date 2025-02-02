@@ -1,6 +1,21 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+
   "extends": [
-    "local>reservoir-data/.github:renovate-config"
-  ]
+    // https://docs.renovatebot.com/config-presets/#grouporganization-level-presets
+    // https://github.com/reservoir-data/.github/blob/main/.github/renovate.json5
+    "reservoir-data/.github//.github/renovate.json5"
+  ],
+
+  // https://docs.renovatebot.com/configuration-options/#packagerules
+  "packageRules": [
+    {
+      "matchPackageNames": ["uv", "astral-sh/uv-pre-commit"],
+      "groupName": "uv-version"
+    },
+    {
+      "matchPackageNames": ["tox", "tox-uv"],
+      "groupName": "tox-version"
+    },
+  ],
 }

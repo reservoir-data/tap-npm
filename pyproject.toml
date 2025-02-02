@@ -1,7 +1,8 @@
 [build-system]
 build-backend = "hatchling.build"
 requires = [
-  "hatchling",
+  "hatch-vcs==0.4",
+  "hatchling==1.27",
 ]
 
 [project]
@@ -29,60 +30,37 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-  "python-dateutil",
-  "requests",
+  "requests~=2.32.0",
   "singer-sdk~=0.44.0",
-]
-optional-dependencies.dev = [
-  "tap-npm[testing,typing]",
-]
-optional-dependencies.testing = [
-  "deptry>=0.12",
-  "pytest>=7.4",
-  "singer-sdk[testing]",
-]
-optional-dependencies.typing = [
-  "mypy",
-  "types-requests",
 ]
 urls.documentation = "https://github.com/edgarrmondragon/tap-npm#readme"
 urls.homepage = "https://github.com/edgarrmondragon/tap-npm"
 urls.repository = "https://github.com/edgarrmondragon/tap-npm"
 scripts.tap-npm = "tap_npm.tap:app"
 
-[tool.hatch.envs.sync.scripts]
-console = "tap-npm {args}"
-jsonl = "tap-npm {args} > tap-npm.jsonl"
-
-[tool.hatch.envs.test]
-features = [ "testing" ]
-[tool.hatch.envs.test.scripts]
-integration = "pytest {args:tests}"
-dependencies = "deptry ."
-
-[tool.hatch.envs.all]
-template = "test"
-[[tool.hatch.envs.all.matrix]]
-python = [
-  "3.9",
-  "3.10",
-  "3.11",
-  "3.12",
-  "3.13",
+[dependency-groups]
+dev = [
+  { include-group = "testing" },
+  { include-group = "typing" },
+]
+testing = [
+  "deptry>=0.12",
+  "pytest>=7.4",
+  "singer-sdk[testing]",
+]
+typing = [
+  "mypy",
+  "types-requests",
 ]
 
-[tool.hatch.envs.typing]
-features = [ "testing", "typing" ]
-[tool.hatch.envs.typing.scripts]
-check = "mypy --strict {args:tap_npm tests}"
+[tool.hatch.version]
+source = "vcs"
 
 [tool.ruff]
 line-length = 88
-src = [ "tap_npm" ]
 
 lint.select = [ "ALL" ]
 lint.ignore = [
-  "ANN101", # missing-type-self
   "COM812", # missing-trailing-comma
   "DJ",     # flake8-django
   "FIX002", # line-contains-todo
@@ -97,16 +75,7 @@ lint.pydocstyle.convention = "google"
 
 [tool.deptry.package_module_name_map]
 mypy = "mypy"
-tap-npm = "tap_npm"
 types-requests = "types_requests"
-
-[tool.deptry.per_rule_ignores]
-DEP002 = [
-  "deptry",
-  "mypy",
-  "pytest",
-  "types-requests",
-]
 
 [tool.pyproject-fmt]
 max_supported_python = "3.13"
@@ -115,6 +84,11 @@ max_supported_python = "3.13"
 addopts = "-vvv"
 
 [tool.mypy]
+enable_error_code = [
+  "ignore-without-code",
+  "redundant-expr",
+  "truthy-bool",
+]
 warn_redundant_casts = true
 warn_unreachable = true
 warn_unused_configs = true
@@ -123,3 +97,8 @@ warn_unused_ignores = true
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
 module = [ "dateutil.*" ]
+
+[tool.uv]
+prerelease = "allow"
+preview = true
+required-version = ">=0.5.19"
