@@ -4,12 +4,10 @@ from __future__ import annotations
 
 import importlib.resources
 import typing as t
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from urllib.parse import quote_plus
 
 import requests
-from dateutil.relativedelta import relativedelta
-from dateutil.tz import UTC
 from singer_sdk import typing as th
 from singer_sdk.streams import RESTStream, Stream
 
@@ -110,7 +108,7 @@ class NPMPackageStream(RESTStream):  # type: ignore[type-arg]
 class NPMDownloadsStream(Stream):
     """NPM downloads stream class."""
 
-    START_DATE = datetime(2016, 1, 1, tzinfo=UTC)
+    START_DATE = datetime(2016, 1, 1, tzinfo=timezone.utc)
     URL_BASE = "https://api.npmjs.org/downloads/range"
 
     name = "downloads"
@@ -167,11 +165,11 @@ class NPMDownloadsStream(Stream):
 
         package = context["package"]
         start_date = (self.get_starting_timestamp(context) or self.START_DATE).date()
-        now = datetime.now(tz=UTC).date() - relativedelta(days=1)
+        now = datetime.now(tz=timezone.utc).date() - timedelta(days=1)
 
         for i, j in range_pairs((start_date - now).days, 0, 500):
-            start = now + relativedelta(days=i)
-            end = now + relativedelta(days=j)
+            start = now + timedelta(days=i)
+            end = now + timedelta(days=j)
 
             url = f"{self.URL_BASE}/{start}:{end}/{package}"
             self.logger.info("Requesting downloads from %s", url)

@@ -7,30 +7,41 @@ on:
       - tap_npm/**
       - tests/**
       - pyproject.toml
+      - tox.ini
+      - uv.lock
       - .github/workflows/test.yml
-      - .github/workflows/constraints.txt
   pull_request:
-    types: [opened, synchronize, reopened]
+    branches: [main]
     paths:
       - tap_npm/**
       - tests/**
       - pyproject.toml
+      - tox.ini
+      - uv.lock
       - .github/workflows/test.yml
-      - .github/workflows/constraints.txt
   schedule:
   - cron: "0 10 * * *"
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FORCE_COLOR: 1
+  # renovate: datasource=pypi depName=uv
+  UV_VERSION: 0.5.26
+  # renovate: datasource=pypi depName=tox
+  TOX_VERSION: 4.24.1
+  # renovate: datasource=pypi depName=tox-uv
+  TOX_UV_VERSION: 1.20.2
+
 jobs:
   tests:
-    runs-on: ubuntu-latest
-    env:
-      FORCE_COLOR: "1"
-      PIP_CONSTRAINT: ${{ github.workspace }}/.github/workflows/constraints.txt
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        script: ["test:integration"]
         python-version:
         - "3.9"
         - "3.10"
@@ -38,45 +49,36 @@ jobs:
         - "3.12"
         - "3.13"
         include:
-        - { script: "test:dependencies", python-version: "3.x" }
-        - { script: "typing:check",      python-version: "3.x" }
+        - { environment: "dependencies", python-version: "3.x" }
+        - { environment: "typing",       python-version: "3.x" }
 
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-    - uses: actions/setup-python@v5
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+    - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
       id: setup-python
       with:
         python-version: ${{ matrix.python-version }}
         allow-prereleases: true
-        cache: pip
-
-    - name: Upgrade pip
-      run: |
-        pip install pip
-        pip --version
-
-    - name: Install Hatch
-      run: |
-        pipx install --python '${{ steps.setup-python.outputs.python-path }}' hatch
-        hatch --version
-
-    - name: Run
+    - uses: astral-sh/setup-uv@887a942a15af3a7626099df99e897a18d9e5ab3a # v5.1.0
+      with:
+        version: ${{ env.UV_VERSION }}
+    - name: Run Tests
       env:
+        UV_PYTHON: ${{ steps.setup-python.outputs.python-path }}
         TAP_NPM_PACKAGES: ${{ secrets.TAP_NPM_PACKAGES }}
-      run: |
-        hatch run ${{ matrix.script }}
+      run: >
+        uvx
+        --with tox-uv==${{ env.TOX_UV_VERSION }}
+        --with tox==${{ env.TOX_VERSION }}
+        tox -e ${{ matrix.environment || matrix.python-version }}
 
   pre-commit:
-    runs-on: ubuntu-latest
-    env:
-      FORCE_COLOR: "1"
+    runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+    - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
       with:
         python-version: "3.x"
-    - uses: pre-commit/action@v3.0.1
-    - uses: pre-commit-ci/lite-action@v1.1.0
+    - uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # v3.0.1
+    - uses: pre-commit-ci/lite-action@5d6cc0eb514c891a40562a58a8e71576c5c7fb43 # v1.1.0
       if: always()

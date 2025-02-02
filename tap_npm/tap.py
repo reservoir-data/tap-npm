@@ -14,12 +14,17 @@ app = TapApp(
         th.Property(
             "packages",
             th.ArrayType(th.StringType),
+            title="Packages",
+            examples=[
+                ["@evidence-dev/duckdb", "@evidence-dev/motherduck"],
+            ],
             required=True,
             description="Packages to query from NPM registry",
         ),
         th.Property(
             "start_date",
             th.DateTimeType,
+            title="Start Date",
             default="2015-01-10",
             description="Initial date to get downloads from",
         ),
