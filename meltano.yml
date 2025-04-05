@@ -10,6 +10,7 @@ plugins:
   - name: tap-npm
     namespace: tap_npm
     pip_url: -e .
+    repo: https://github.com/reservoir-data/tap-npm
     capabilities:
     - catalog
     - discover
