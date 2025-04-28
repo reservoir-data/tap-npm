@@ -3,6 +3,8 @@ ci:
   autofix_commit_msg: 'chore: pre-commit.ci auto fixes'
   autoupdate_schedule: weekly
   autoupdate_commit_msg: 'chore(deps): pre-commit autoupdate'
+  skip:
+  - uv-lock
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -42,3 +44,9 @@ repos:
     language: python
     additional_dependencies:
     - pyjson5==1.6.8
+
+- repo: https://github.com/astral-sh/uv-pre-commit
+  rev: "0.6.17"
+  hooks:
+  - id: uv-lock
+  - id: uv-sync
