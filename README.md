@@ -6,8 +6,6 @@ Built with the [Meltano Tap SDK](https://sdk.meltano.com) for Singer Taps.
 
 ## Installation
 
-- [ ] `Developer TODO:` Update the below as needed to correctly describe the install procedure. For instance, if you do not have a PyPi repo, or if you want users to directly install from your git repo, you can modify this step as appropriate.
-
 ```bash
 uv tool install git+https://github.com/reservoir-data/tap-npm.git
 ```
@@ -60,7 +58,7 @@ Your project comes with a custom `meltano.yml` project file already created. Ins
 
 ```bash
 # Install meltano
-pipx install meltano
+uv tool install meltano
 # Initialize meltano within this directory
 cd tap-npm
 meltano install
@@ -71,8 +69,8 @@ Now you can test and orchestrate using Meltano:
 ```bash
 # Test invocation:
 meltano invoke tap-npm --version
-# OR run a test `elt` pipeline:
-meltano elt tap-npm target-jsonl
+# OR run a test EL pipeline:
+meltano run tap-npm target-jsonl
 ```
 
 ### SDK Dev Guide
