@@ -33,9 +33,9 @@ dependencies = [
   "requests~=2.32.0",
   "singer-sdk~=0.48.0",
 ]
-urls.documentation = "https://github.com/edgarrmondragon/tap-npm#readme"
-urls.homepage = "https://github.com/edgarrmondragon/tap-npm"
-urls.repository = "https://github.com/edgarrmondragon/tap-npm"
+urls.documentation = "https://github.com/reservoir-data/tap-npm#readme"
+urls.homepage = "https://github.com/reservoir-data/tap-npm"
+urls.repository = "https://github.com/reservoir-data/tap-npm"
 scripts.tap-npm = "tap_npm.tap:app"
 
 [dependency-groups]

@@ -6,16 +6,4 @@
     // https://github.com/reservoir-data/.github/blob/main/.github/renovate.json5
     "reservoir-data/.github//.github/renovate.json5"
   ],
-
-  // https://docs.renovatebot.com/configuration-options/#packagerules
-  "packageRules": [
-    {
-      "matchPackageNames": ["uv", "astral-sh/uv-pre-commit"],
-      "groupName": "uv-version"
-    },
-    {
-      "matchPackageNames": ["tox", "tox-uv"],
-      "groupName": "tox-version"
-    },
-  ],
 }
