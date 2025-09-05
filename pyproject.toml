@@ -8,7 +8,7 @@ requires = [
 [project]
 name = "tap-npm"
 version = "0.0.1"
-description = "`tap-npm` is a Singer tap for NPM, built with the Meltano SDK for Singer Taps."
+description = "Singer tap for NPM, built with the Meltano SDK for Singer Taps."
 readme = "README.md"
 keywords = [
   "ELT",
@@ -20,12 +20,9 @@ keywords = [
 license = "Apache-2.0"
 maintainers = [ { name = "Edgar Ramírez-Mondragón", email = "edgarrm358@gmail.com" } ]
 authors = [ { name = "Edgar Ramírez-Mondragón", email = "edgarrm358@gmail.com" } ]
-requires-python = ">=3.10"
+requires-python = ">=3.13"
 classifiers = [
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
 ]
@@ -44,12 +41,13 @@ dev = [
   { include-group = "typing" },
 ]
 testing = [
-  "deptry>=0.12",
-  "pytest>=7.4",
+  "deptry>=0.23",
+  "pytest>=8",
   "singer-sdk[testing]",
 ]
 typing = [
-  "mypy",
+  "mypy>=1.17",
+  "ty>=0.0.1a20",
   "types-requests",
 ]
 
@@ -57,7 +55,7 @@ typing = [
 source = "vcs"
 
 [tool.ruff]
-line-length = 88
+line-length = 120
 
 lint.select = [ "ALL" ]
 lint.ignore = [
@@ -90,9 +88,6 @@ env_list = [
   "typing",
   "3.14",
   "3.13",
-  "3.12",
-  "3.11",
-  "3.10",
 ]
 
 [tool.tox.env_run_base]
@@ -107,7 +102,10 @@ commands = [ [ "deptry", "." ] ]
 
 [tool.tox.env.typing]
 dependency_groups = [ "testing", "typing" ]
-commands = [ [ "mypy", "--strict", { replace = "posargs", default = [ "tap_npm", "tests" ], extend = true } ] ]
+commands = [
+  [ "mypy", "--strict", { replace = "posargs", default = [ "tap_npm", "tests" ], extend = true } ],
+  [ "ty", "check", { replace = "posargs", default = [ "tap_npm", "tests" ], extend = true } ],
+]
 
 [tool.mypy]
 enable_error_code = [
