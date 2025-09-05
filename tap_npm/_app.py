@@ -43,13 +43,14 @@ class TapApp:
         self.plugin.name = name
         self.plugin.__doc__ = description or name
 
-        if isinstance(config_jsonschema, dict):
-            self.plugin.config_jsonschema = config_jsonschema
-        elif isinstance(config_jsonschema, th.PropertiesList):
-            self.plugin.config_jsonschema = config_jsonschema.to_dict()
-        else:
-            errmsg = "config_jsonschema must be a dict or JSONTypeHelper"
-            raise TypeError(errmsg)
+        match config_jsonschema:
+            case dict():
+                self.plugin.config_jsonschema = config_jsonschema
+            case th.PropertiesList():
+                self.plugin.config_jsonschema = config_jsonschema.to_dict()
+            case _:
+                errmsg = "config_jsonschema must be a dict or JSONTypeHelper"
+                raise TypeError(errmsg)
 
         self.streams = streams or []
 

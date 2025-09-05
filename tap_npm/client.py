@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import importlib.resources
 import typing as t
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from urllib.parse import quote_plus
 
 import requests
@@ -16,14 +16,12 @@ from tap_npm import schemas
 if t.TYPE_CHECKING:
     from collections.abc import Generator
 
-    from singer_sdk.helpers.types import Context
+    from singer_sdk.helpers.types import Context, Record
 
 SCHEMAS_DIR = importlib.resources.files(schemas)
 
 
-def range_pairs(
-    start: int, end: int, step: int
-) -> Generator[tuple[int, int], None, None]:
+def range_pairs(start: int, end: int, step: int) -> Generator[tuple[int, int]]:
     """Yield pairs of numbers from start to end, with step size.
 
     Args:
@@ -44,45 +42,27 @@ def range_pairs(
     yield current_value, end - 1
 
 
-class NPMPackageStream(RESTStream):  # type: ignore[type-arg]
+class NPMPackageStream(RESTStream[t.Any]):
     """NPM Packages stream class."""
 
     url_base = "https://registry.npmjs.org"
     name = "packages"
-    primary_keys: t.ClassVar[list[str]] = ["_id"]
+    primary_keys: tuple[str, ...] = ("_id",)
     schema_filepath = SCHEMAS_DIR / "packages.json"
     records_jsonpath = "$"
     path = "/{package}"
 
     @property
-    def partitions(self) -> list[dict[str, t.Any]]:
-        """Return a list of partitions.
-
-        Returns:
-            A list of partitions.
-        """
+    @t.override
+    def partitions(self) -> list[dict[str, str]]:
         return [{"package": quote_plus(package)} for package in self.config["packages"]]
 
     @staticmethod
-    def _clean_license(
-        value: str | dict[str, t.Any] | None,
-    ) -> dict[str, str | None] | None:
+    def _clean_license(value: str | dict[str, t.Any] | None) -> dict[str, str | None] | None:
         return {"type": value, "url": None} if isinstance(value, str) else value
 
-    def post_process(
-        self,
-        row: dict[str, t.Any],
-        context: Context | None = None,  # noqa: ARG002
-    ) -> dict[str, t.Any]:
-        """Post-process a row.
-
-        Args:
-            row: The row.
-            context: The stream context.
-
-        Returns:
-            The processed row.
-        """
+    @t.override
+    def post_process(self, row: Record, context: Context | None = None) -> Record:
         times: dict[str, str] = row.pop("time", {})
         row["modified"] = times.pop("modified")
         row["created"] = times.pop("created")
@@ -108,11 +88,11 @@ class NPMPackageStream(RESTStream):  # type: ignore[type-arg]
 class NPMDownloadsStream(Stream):
     """NPM downloads stream class."""
 
-    START_DATE = datetime(2016, 1, 1, tzinfo=timezone.utc)
+    START_DATE = datetime(2016, 1, 1, tzinfo=UTC)
     URL_BASE = "https://api.npmjs.org/downloads/range"
 
     name = "downloads"
-    primary_keys: t.ClassVar[list[str]] = ["package", "day"]
+    primary_keys: tuple[str, ...] = ("package", "day")
     replication_key = "day"
 
     schema = th.PropertiesList(
@@ -122,50 +102,24 @@ class NPMDownloadsStream(Stream):
     ).to_dict()
 
     @property
-    def partitions(self) -> list[dict[str, t.Any]]:
-        """Return a list of partitions.
-
-        Returns:
-            A list of partitions.
-        """
+    @t.override
+    def partitions(self) -> list[dict[str, str]]:
         return [{"package": package} for package in self.config["packages"]]
 
-    def post_process(
-        self,
-        row: dict[str, t.Any],
-        context: Context | None = None,
-    ) -> dict[str, t.Any]:
-        """Post-process a row.
-
-        Args:
-            row: The row.
-            context: The stream context.
-
-        Returns:
-            The row.
-        """
+    @t.override
+    def post_process(self, row: Record, context: Context | None = None) -> Record:
         if context:
             row["package"] = context["package"]
         return row
 
-    def get_records(
-        self,
-        context: Context | None,
-    ) -> Generator[dict[str, t.Any], None, None]:
-        """Get download records.
-
-        Args:
-            context: The stream context.
-
-        Yields:
-            Dictionaries of download records.
-        """
+    @t.override
+    def get_records(self, context: Context | None) -> Generator[Record]:
         if not context:
             return
 
         package = context["package"]
         start_date = (self.get_starting_timestamp(context) or self.START_DATE).date()
-        now = datetime.now(tz=timezone.utc).date() - timedelta(days=1)
+        now = datetime.now(tz=UTC).date() - timedelta(days=1)
 
         for i, j in range_pairs((start_date - now).days, 0, 500):
             start = now + timedelta(days=i)
