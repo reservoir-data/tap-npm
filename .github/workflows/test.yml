@@ -32,7 +32,7 @@ env:
   # renovate: datasource=pypi depName=prek
   PREK_VERSION: 0.1.6
   # renovate: datasource=pypi depName=uv
-  UV_VERSION: 0.8.15
+  UV_VERSION: 0.8.19
   # renovate: datasource=pypi depName=tox
   TOX_VERSION: 4.30.2
   # renovate: datasource=pypi depName=tox-uv
