@@ -28,7 +28,7 @@ classifiers = [
 ]
 dependencies = [
   "requests~=2.32.0",
-  "singer-sdk~=0.48.0",
+  "singer-sdk~=0.49.1",
 ]
 urls.documentation = "https://github.com/reservoir-data/tap-npm#readme"
 urls.homepage = "https://github.com/reservoir-data/tap-npm"
