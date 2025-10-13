@@ -54,6 +54,11 @@ typing = [
 [tool.hatch.version]
 source = "vcs"
 
+[tool.uv]
+prerelease = "allow"
+preview = true
+required-version = ">=0.5.19"
+
 [tool.ruff]
 line-length = 120
 
@@ -121,8 +126,3 @@ warn_unused_ignores = true
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
 module = [ "dateutil.*" ]
-
-[tool.uv]
-prerelease = "allow"
-preview = true
-required-version = ">=0.5.19"
