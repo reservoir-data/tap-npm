@@ -13,7 +13,7 @@ app = TapApp(
     config_jsonschema=th.PropertiesList(
         th.Property(
             "packages",
-            th.ArrayType(th.StringType),
+            th.ArrayType(th.StringType),  # ty: ignore[invalid-argument-type]
             title="Packages",
             examples=[
                 ["@evidence-dev/duckdb", "@evidence-dev/motherduck"],
