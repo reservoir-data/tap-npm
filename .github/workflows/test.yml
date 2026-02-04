@@ -1,5 +1,8 @@
 name: Test tap-npm
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [main]
