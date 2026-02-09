@@ -95,12 +95,6 @@ env_list = [
   "3.13",
 ]
 
-[tool.tox.env_run_base]
-runner = "uv-venv-lock-runner"
-pass_env = [ "TAP_NPM_*" ]
-dependency_groups = [ "testing" ]
-commands = [ [ "pytest", { replace = "posargs", default = [ "tests" ], extend = true } ] ]
-
 [tool.tox.env.dependencies]
 dependency_groups = [ "testing" ]
 commands = [ [ "deptry", "." ] ]
@@ -111,6 +105,12 @@ commands = [
   [ "mypy", "--strict", { replace = "posargs", default = [ "tap_npm", "tests" ], extend = true } ],
   [ "ty", "check", { replace = "posargs", default = [ "tap_npm", "tests" ], extend = true } ],
 ]
+
+[tool.tox.env_run_base]
+runner = "uv-venv-lock-runner"
+pass_env = [ "TAP_NPM_*" ]
+dependency_groups = [ "testing" ]
+commands = [ [ "pytest", { replace = "posargs", default = [ "tests" ], extend = true } ] ]
 
 [tool.mypy]
 enable_error_code = [
