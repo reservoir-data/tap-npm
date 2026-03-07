@@ -33,7 +33,7 @@ concurrency:
 env:
   FORCE_COLOR: 1
   # renovate: datasource=pypi depName=prek
-  PREK_VERSION: 0.3.1
+  PREK_VERSION: 0.3.4
   # renovate: datasource=pypi depName=uv
   UV_VERSION: 0.9.28
   # renovate: datasource=pypi depName=tox
