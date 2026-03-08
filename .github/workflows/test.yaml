@@ -10,16 +10,13 @@ on:
       - tap_npm/**
       - tests/**
       - pyproject.toml
-      - tox.ini
       - uv.lock
       - .github/workflows/test.yml
   pull_request:
-    branches: [main]
     paths:
       - tap_npm/**
       - tests/**
       - pyproject.toml
-      - tox.ini
       - uv.lock
       - .github/workflows/test.yml
   schedule:
@@ -42,37 +39,39 @@ env:
   TOX_UV_VERSION: 1.33.0
 
 jobs:
+  build-package:
+    name: Build & verify package
+    runs-on: ubuntu-latest
+    outputs:
+      supported-python-versions: ${{ steps.baipp.outputs.supported_python_classifiers_json_array }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: hynek/build-and-inspect-python-package@efb823f52190ad02594531168b7a2d5790e66516 # v2.14.0
+        id: baipp
+
   tests:
+    name: Integration tests
     runs-on: ubuntu-24.04
+    needs: build-package
     strategy:
       fail-fast: false
       matrix:
-        python-version:
-        - "3.13"
-        - "3.14"
-        include:
-        - { environment: "dependencies", python-version: "3.x" }
-        - { environment: "typing",       python-version: "3.x" }
-
+        python-version: ${{ fromJson(needs.build-package.outputs.supported-python-versions) }}
     steps:
     - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-    - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
-      id: setup-python
-      with:
-        python-version: ${{ matrix.python-version }}
-        allow-prereleases: true
     - uses: astral-sh/setup-uv@5a095e7a2014a4212f075830d4f7277575a9d098 # v7.3.1
       with:
+        python-version: ${{ matrix.python-version }}
         version: ${{ env.UV_VERSION }}
     - name: Run Tests
-      env:
-        UV_PYTHON: ${{ steps.setup-python.outputs.python-path }}
-        TAP_NPM_PACKAGES: ${{ secrets.TAP_NPM_PACKAGES }}
       run: >
         uvx
         --with tox-uv==${{ env.TOX_UV_VERSION }}
         --with tox==${{ env.TOX_VERSION }}
-        tox -e ${{ matrix.environment || matrix.python-version }}
+        tox -e ${{ matrix.python-version }}
 
   pre-commit:
     runs-on: ubuntu-24.04
@@ -86,3 +85,22 @@ jobs:
         uvx
         --with prek==${{ env.PREK_VERSION }}
         prek run --show-diff-on-failure --all-files
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+    - uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b # v7.3.0
+      with:
+        version: ${{ env.UV_VERSION }}
+    - run: >
+        uv tool install
+        --managed-python
+        --with tox-uv==${{ env.TOX_UV_VERSION }}
+        --from tox==${{ env.TOX_VERSION }}
+        tox
+    - name: Static type checking
+      run: tox -e typing
+    - name: Unused, missing and transitive dependencies
+      run: tox -e dependencies
