@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import importlib.resources
 import typing as t
 from datetime import UTC, datetime, timedelta
 from urllib.parse import quote_plus
@@ -11,14 +10,10 @@ import requests
 from singer_sdk import typing as th
 from singer_sdk.streams import RESTStream, Stream
 
-from tap_npm import schemas
-
 if t.TYPE_CHECKING:
     from collections.abc import Generator
 
     from singer_sdk.helpers.types import Context, Record
-
-SCHEMAS_DIR = importlib.resources.files(schemas)
 
 
 def range_pairs(start: int, end: int, step: int) -> Generator[tuple[int, int]]:
@@ -48,7 +43,65 @@ class NPMPackageStream(RESTStream[t.Any]):
     url_base = "https://registry.npmjs.org"
     name = "packages"
     primary_keys: tuple[str, ...] = ("_id",)
-    schema_filepath = SCHEMAS_DIR / "packages.json"
+    schema = th.PropertiesList(
+        th.Property("_id", th.StringType),
+        th.Property("_rev", th.StringType),
+        th.Property(
+            "author",
+            th.ObjectType(
+                th.Property("name", th.StringType),
+                th.Property("email", th.StringType),
+            ),
+        ),
+        th.Property(
+            "bugs",
+            th.ObjectType(
+                th.Property("url", th.StringType),
+                th.Property("required", th.StringType),
+            ),
+        ),
+        th.Property("description", th.StringType),
+        th.Property("latest", th.StringType),
+        th.Property("dist_tags", th.ArrayType(th.StringType)),
+        th.Property("homepage", th.StringType),
+        th.Property(
+            "license",
+            th.ObjectType(
+                th.Property("type", th.StringType),
+                th.Property("url", th.StringType),
+            ),
+        ),
+        th.Property(
+            "maintainers",
+            th.ArrayType(th.ObjectType(th.Property("email", th.StringType), th.Property("name", th.StringType))),
+        ),
+        th.Property("name", th.StringType),
+        th.Property("readme", th.StringType),
+        th.Property("readmeFilename", th.StringType),
+        th.Property(
+            "repository",
+            th.ObjectType(
+                th.Property("directory", th.StringType),
+                th.Property("type", th.StringType),
+                th.Property("url", th.StringType),
+            ),
+        ),
+        th.Property("modified", th.DateTimeType),
+        th.Property("created", th.DateTimeType),
+        th.Property(
+            "timestamps",
+            th.ArrayType(
+                th.ObjectType(
+                    th.Property("version", th.StringType),
+                    th.Property("timestamp", th.StringType),
+                ),
+            ),
+        ),
+        th.Property("users", th.ArrayType(th.StringType)),
+        th.Property("keywords", th.ArrayType(th.StringType)),
+        th.Property("package", th.StringType),
+    ).to_dict()
+
     records_jsonpath = "$"
     path = "/{package}"
 

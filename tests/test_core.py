@@ -30,4 +30,13 @@ def test_range_pairs() -> None:
     assert list(range_pairs(0, 10, 2)) == [(0, 1), (2, 3), (4, 5), (6, 7), (8, 9)]
 
 
-TestTapNPM = get_tap_test_class(app.plugin)
+TestTapNPM = get_tap_test_class(
+    app.plugin,
+    config={
+        "packages": [
+            "@evidence-dev/evidence",
+            "@evidence-dev/duckdb",
+            "react",
+        ],
+    },
+)
