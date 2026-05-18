@@ -36,7 +36,7 @@ class TapApp:
             ValueError: If config_jsonschema is not a dict or JSONTypeHelper.
         """
 
-        class CustomTap(cls):  # type: ignore[misc, valid-type]
+        class CustomTap(cls):  # type: ignore[misc, valid-type]  # ty:ignore[unsupported-base]
             pass
 
         self.plugin: type[CustomTap] = CustomTap
