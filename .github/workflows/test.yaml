@@ -30,13 +30,13 @@ concurrency:
 env:
   FORCE_COLOR: 1
   # renovate: datasource=pypi depName=prek
-  PREK_VERSION: 0.3.4
+  PREK_VERSION: 0.4.5
   # renovate: datasource=pypi depName=uv
-  UV_VERSION: 0.10.7
+  UV_VERSION: 0.11.25
   # renovate: datasource=pypi depName=tox
-  TOX_VERSION: 4.46.3
+  TOX_VERSION: 4.56.1
   # renovate: datasource=pypi depName=tox-uv
-  TOX_UV_VERSION: 1.33.0
+  TOX_UV_VERSION: 1.35.1
 
 jobs:
   build-package:
@@ -45,11 +45,11 @@ jobs:
     outputs:
       supported-python-versions: ${{ steps.baipp.outputs.supported_python_classifiers_json_array }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: hynek/build-and-inspect-python-package@efb823f52190ad02594531168b7a2d5790e66516 # v2.14.0
+      - uses: hynek/build-and-inspect-python-package@d44ca7d91762de7a7d5436ddae667c6da6d1c3df # v2.18.0
         id: baipp
 
   tests:
@@ -61,44 +61,53 @@ jobs:
       matrix:
         python-version: ${{ fromJson(needs.build-package.outputs.supported-python-versions) }}
     steps:
-    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-    - uses: astral-sh/setup-uv@5a095e7a2014a4212f075830d4f7277575a9d098 # v7.3.1
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      with:
+        persist-credentials: false
+    - uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
       with:
         python-version: ${{ matrix.python-version }}
         version: ${{ env.UV_VERSION }}
     - name: Run Tests
       run: >
         uvx
-        --with tox-uv==${{ env.TOX_UV_VERSION }}
-        --with tox==${{ env.TOX_VERSION }}
-        tox -e ${{ matrix.python-version }}
+        --with tox-uv=="${TOX_UV_VERSION}"
+        --with tox=="${TOX_VERSION}"
+        tox -e "${MATRIX_PYTHON_VERSION}"
+      env:
+        MATRIX_PYTHON_VERSION: ${{ matrix.python-version }}
 
   pre-commit:
+    name: pre-commit
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      with:
+        persist-credentials: false
     - name: Install the latest version of uv
-      uses: astral-sh/setup-uv@5a095e7a2014a4212f075830d4f7277575a9d098 # v7.3.1
+      uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
       with:
         version: ${{ env.UV_VERSION }}
     - run: >
         uvx
-        --with prek==${{ env.PREK_VERSION }}
+        --with prek=="${PREK_VERSION}"
         prek run --show-diff-on-failure --all-files
 
   lint:
     name: Lint
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-    - uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b # v7.3.0
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      with:
+        persist-credentials: false
+    - uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
       with:
         version: ${{ env.UV_VERSION }}
     - run: >
         uv tool install
         --managed-python
-        --with tox-uv==${{ env.TOX_UV_VERSION }}
-        --from tox==${{ env.TOX_VERSION }}
+        --with tox-uv=="${TOX_UV_VERSION}"
+        --from tox=="${TOX_VERSION}"
         tox
     - name: Static type checking
       run: tox -e typing
