@@ -103,8 +103,6 @@ warn_unused_ignores = true
 addopts = [
   "-v",
   "-ra",
-  "--strict-config",
-  "--strict-markers",
 ]
 filterwarnings = [
   "error",
@@ -114,7 +112,6 @@ log_level = "INFO"
 minversion = "9"
 strict = true
 testpaths = [ "tests" ]
-xfail_strict = true
 
 [tool.tox]
 min_version = "4.22"
