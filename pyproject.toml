@@ -26,7 +26,7 @@ classifiers = [
 dynamic = [ "version" ]
 dependencies = [
   "requests~=2.34.0",
-  "singer-sdk~=0.54.0a4",
+  "singer-sdk~=0.55.0a1",
 ]
 [[project.authors]]
 name = "Edgar Ramírez-Mondragón"
