@@ -22,6 +22,7 @@ classifiers = [
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
 ]
 dynamic = [ "version" ]
 dependencies = [
@@ -83,6 +84,7 @@ isort.required-imports = [ "from __future__ import annotations" ]
 pydocstyle.convention = "google"
 
 [tool.pyproject-fmt]
+max_supported_python = "3.15"
 table_format = "long"
 
 [tool.mypy]
@@ -130,7 +132,6 @@ commands = [
   [ "mypy", { replace = "posargs", default = [ "tap_npm", "tests" ], extend = true } ],
   [ "ty", "check", { replace = "posargs", default = [ "tap_npm", "tests" ], extend = true } ],
 ]
-
 [tool.tox.env_run_base]
 runner = "uv-venv-lock-runner"
 dependency_groups = [ "testing" ]

@@ -1,6 +1,8 @@
 """Base tap application.
 
 TODO: Consider moving this to singer-sdk.
+
+Copyright (c) 2026 Edgar-Ramírez Mondragón
 """
 
 from __future__ import annotations
