@@ -17,6 +17,7 @@ if t.TYPE_CHECKING:
     from collections.abc import Generator
 
     from singer_sdk.helpers.types import Context, Record
+    from singer_sdk.singerlib.types import KeyProperties
 
 
 def range_pairs(start: int, end: int, step: int) -> Generator[tuple[int, int]]:
@@ -45,7 +46,7 @@ class NPMPackageStream(RESTStream[t.Any]):
 
     url_base = "https://registry.npmjs.org"
     name = "packages"
-    primary_keys: tuple[str, ...] = ("_id",)
+    primary_keys: KeyProperties = ("_id",)
     schema = th.PropertiesList(
         th.Property("_id", th.StringType),
         th.Property("_rev", th.StringType),
@@ -148,7 +149,7 @@ class NPMDownloadsStream(Stream):
     URL_BASE = "https://api.npmjs.org/downloads/range"
 
     name = "downloads"
-    primary_keys: tuple[str, ...] = ("package", "day")
+    primary_keys: KeyProperties = ("package", "day")
     replication_key = "day"
 
     schema = th.PropertiesList(
